@@ -1,0 +1,145 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #bdefff;
+  overflow-x: hidden;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  width: 100%;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #003f4f;
+}
+
+.logo span {
+  margin-left: 5px;
+}
+
+nav a {
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 15px;
+  color: #003f4f;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #ff3b3b;
+}
+
+/* NAV BUTTONS */
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.login {
+  text-decoration: none;
+  font-weight: 500;
+  color: #003f4f;
+  margin-top: 10px;
+}
+
+.signup {
+  background: #ff3b3b;
+  padding: 10px 20px;
+  border-radius: 12px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ================= HERO SECTION ================= */
+.hero {
+    display: flex;
+    justify-content: center;
+    /*gap: 15rem;*/
+    align-items: center;
+    padding: 60px;
+    height: 85vh;
+}
+
+/* LEFT SIDE */
+.hero-text {
+  max-width: 500px;
+}
+
+.hero-text h1 {
+  font-size: 65px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #003f4f;
+}
+
+.hero-text h1 span {
+  color: #ff3b3b;
+}
+
+.hero-text p {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #004c5a;
+  max-width: 350px;
+}
+
+/* BUTTONS */
+.hero-buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.primary {
+  background: #ff3b3b;
+  color: white;
+}
+
+.secondary {
+  background: transparent;
+  color: #003f4f;
+}
+
+/* RIGHT SIDE IMAGE */
+.hero-image {
+  position: relative;
+}
+
+.hero-image img {
+  width: 55rem;
+  max-width: 100%;
+  border-radius: 25px;
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: yellow;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+}

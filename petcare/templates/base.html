@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pet Shop Landing Page</title>
+
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="{% static 'styles/style.css' %}" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="navbar">
+    <div class="logo">
+      <span>BARN</span>
+    </div>
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Products</a>
+      <a href="#">Services</a>
+      <a href="#">About</a>
+      <a href="#">Accessories</a>
+    </nav>
+
+    <div class="nav-buttons">
+      <a class="login" href="#">Login</a>
+      <a class="signup" href="#">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <section class="hero">
+
+    <!-- LEFT CONTENT -->
+    <div class="hero-text">
+      <h1>
+        FIND A <br>
+        <span>NEW PET</span><br>
+        FOR YOU.
+      </h1>
+
+      <p>
+        With us you can find pets or sell them more easily and quickly.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#" class="btn primary">Browse Pets</a>
+        <a href="#" class="btn secondary">Rehome a Pet</a>
+      </div>
+    </div>
+
+    <!-- RIGHT IMAGE -->
+    <div class="hero-image">
+      <img src="{% static 'images/2.png' %}" alt="Dog Image">
+
+    </div>
+
+  </section>
+
+</body>
+</html>

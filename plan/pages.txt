@@ -1,0 +1,10 @@
+home app
+
+/ --> main page - landing page
+/about
+/contact
+
+
+#buy
+
+#sell
