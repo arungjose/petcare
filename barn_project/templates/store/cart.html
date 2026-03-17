@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}My Cart — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>🛒 Your Cart</h1>
+    <p>{{ cart.get_item_count }} item{{ cart.get_item_count|pluralize }} in your cart</p>
+  </div>
+</div>
+
+<div class="cart-layout">
+  <div class="cart-items">
+    {% if cart.items.all %}
+      {% for item in cart.items.all %}
+      <div class="cart-item">
+        <div style="width:90px;height:90px;border-radius:var(--radius);overflow:hidden;background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          {% if item.product and item.product.image %}<img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width:100%;height:100%;object-fit:cover;">
+          {% elif item.pet and item.pet.primary_image %}<img src="{{ item.pet.primary_image.image.url }}" alt="{{ item.pet.name }}" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}<span style="font-size:36px;">{% if item.pet %}🐾{% else %}📦{% endif %}</span>{% endif %}
+        </div>
+        <div class="cart-item-body">
+          <div class="cart-item-name">{% if item.product %}{{ item.product.name }}{% else %}{{ item.pet.name }}{% endif %}</div>
+          <div style="font-size:13px;color:var(--ink-light);">{% if item.product %}{{ item.product.brand|default:"BARN Store" }}{% else %}{{ item.pet.breed.name|default:item.pet.category.name }}{% endif %}</div>
+          <div class="cart-item-price">₹{% if item.product %}{{ item.product.price|floatformat:0 }}{% else %}{{ item.pet.price|floatformat:0 }}{% endif %} each</div>
+          <form method="POST" action="{% url 'update_cart' item.id %}" style="display:inline-flex;align-items:center;gap:8px;margin-top:8px;">
+            {% csrf_token %}
+            <button type="button" class="qty-btn" data-action="dec">−</button>
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="qty-input" style="width:48px;text-align:center;padding:4px 8px;border-radius:8px;border:2px solid var(--border);font-weight:600;">
+            <button type="button" class="qty-btn" data-action="inc">+</button>
+            <button type="submit" style="font-size:12px;color:var(--teal);background:none;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;">Update</button>
+          </form>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-weight:700;font-size:18px;color:var(--teal);margin-bottom:12px;">₹{{ item.subtotal|floatformat:0 }}</div>
+          <a href="{% url 'remove_from_cart' item.id %}">
+            <button class="remove-btn" title="Remove item">🗑</button>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div style="margin-top:20px;">
+        <a href="{% url 'store_home' %}" class="btn btn-ghost">← Continue Shopping</a>
+      </div>
+    {% else %}
+    <div class="empty-state" style="background:var(--white);border-radius:var(--radius-lg);padding:80px;border:2px dashed var(--border);">
+      <div class="empty-icon">🛒</div>
+      <h3>Your cart is empty</h3>
+      <p>Add some products to get started!</p>
+      <a href="{% url 'store_home' %}" class="btn btn-primary" style="margin-top:20px;">Shop Now</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  {% if cart.items.all %}
+  <div class="cart-summary">
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:20px;">Order Summary</h3>
+    {% for item in cart.items.all %}
+    <div class="summary-row">
+      <span>{{ item.product.name|truncatechars:30 }} × {{ item.quantity }}</span>
+      <span>₹{{ item.subtotal|floatformat:0 }}</span>
+    </div>
+    {% endfor %}
+    <div class="summary-row">
+      <span>Shipping</span>
+      <span style="color:var(--teal);font-weight:600;">Free</span>
+    </div>
+    <div class="summary-row summary-total">
+      <span>Total</span>
+      <span>₹{{ cart.get_total|floatformat:0 }}</span>
+    </div>
+    <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg w-full" style="justify-content:center;margin-top:20px;">
+      Proceed to Checkout →
+    </a>
+    <p style="font-size:12px;color:var(--ink-light);text-align:center;margin-top:12px;">🔒 Secure checkout</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

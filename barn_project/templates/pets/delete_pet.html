@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Remove Listing — BARN{% endblock %}
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:60px 24px;">
+  <div style="background:var(--white);border-radius:var(--radius-xl);padding:48px;max-width:480px;width:100%;text-align:center;box-shadow:var(--shadow-md);border:2px solid var(--coral);">
+    <div style="font-size:64px;margin-bottom:20px;">⚠️</div>
+    <h1 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px;">Remove This Listing?</h1>
+    <p style="color:var(--ink-mid);font-size:15px;margin-bottom:8px;">You are about to permanently delete:</p>
+    <p style="font-size:20px;font-weight:700;color:var(--coral);margin-bottom:28px;">{{ pet.name }}</p>
+    <p style="font-size:14px;color:var(--ink-light);margin-bottom:32px;">This action cannot be undone. All inquiries and images will also be deleted.</p>
+    <form method="POST" style="display:flex;gap:12px;justify-content:center;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-coral btn-lg">Yes, Delete</button>
+      <a href="{% url 'seller_dashboard' %}" class="btn btn-ghost btn-lg">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

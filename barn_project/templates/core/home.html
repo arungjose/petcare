@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}BARN — Find A New Pet For You{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section>
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">🐾 India's Premium Pet Platform</div>
+      <h1 class="hero-title">
+        Find Your<br>
+        <span class="highlight">Perfect</span><br>
+        <span class="accent">Companion.</span>
+      </h1>
+      <p class="hero-desc">
+        Browse verified breeders, adopt loving animals, and discover everything your pet needs — all in one place.
+      </p>
+      <div class="hero-actions">
+        <a href="{% url 'pet_list' %}" class="btn btn-primary btn-lg">Browse Pets</a>
+        <a href="{% url 'adoption_list' %}" class="btn btn-outline-teal btn-lg">❤️ Adopt a Pet</a>
+      </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80" alt="Happy Dog" class="hero-image-main" onerror="this.style.display='none'">
+      <div class="hero-badge hero-badge-1">
+        <div class="badge-icon">✅</div>
+        <div class="badge-text">Verified Sellers</div>
+        <div class="badge-sub">License checked</div>
+      </div>
+      <div class="hero-badge hero-badge-2">
+        <div class="badge-icon">💉</div>
+        <div class="badge-text">Health Certified</div>
+        <div class="badge-sub">Vaccinated pets</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CATEGORIES STRIP ═══ -->
+<div class="categories-strip">
+  <div class="container">
+    <a href="{% url 'pet_list' %}?category=dogs" class="cat-pill">
+      <span class="cat-icon">🐕</span> Dogs
+    </a>
+    <a href="{% url 'pet_list' %}?category=cats" class="cat-pill">
+      <span class="cat-icon">🐈</span> Cats
+    </a>
+    <a href="{% url 'pet_list' %}?category=birds" class="cat-pill">
+      <span class="cat-icon">🦜</span> Birds
+    </a>
+    <a href="{% url 'pet_list' %}?category=rabbits" class="cat-pill">
+      <span class="cat-icon">🐇</span> Rabbits
+    </a>
+    <a href="{% url 'pet_list' %}?category=fish" class="cat-pill">
+      <span class="cat-icon">🐠</span> Fish
+    </a>
+    <a href="{% url 'adoption_list' %}" class="cat-pill" style="border-color:#7c3aed;color:#7c3aed;">
+      <span class="cat-icon">❤️</span> Adopt
+    </a>
+  </div>
+</div>
+
+<!-- ═══ FEATURED PETS ═══ -->
+<section class="section" style="background: var(--white);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">New Arrivals</div>
+      <h2 class="section-title">Find Your New Best Friend</h2>
+      <p class="section-sub">Discover healthy, happy pets from verified breeders and loving owners.</p>
+    </div>
+
+    {% if featured_pets %}
+    <div class="pets-grid">
+      {% for pet in featured_pets %}
+      <a href="{% url 'pet_detail' pet.slug %}" style="text-decoration:none;color:inherit;">
+        <div class="pet-card fade-in">
+          <div class="pet-card-image">
+            {% if pet.primary_image %}
+              <img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}" loading="lazy">
+            {% else %}
+              <div class="pet-placeholder">
+                {% if pet.category.slug == 'dogs' %}🐕
+                {% elif pet.category.slug == 'cats' %}🐈
+                {% elif pet.category.slug == 'birds' %}🦜
+                {% elif pet.category.slug == 'rabbits' %}🐇
+                {% elif pet.category.slug == 'fish' %}🐠
+                {% else %}🐾{% endif %}
+              </div>
+            {% endif %}
+            <span class="pet-badge {% if pet.listing_type == 'sale' %}badge-sale{% elif pet.listing_type == 'adoption' %}badge-adopt{% else %}badge-both{% endif %}">
+              {% if pet.listing_type == 'sale' %}For Sale
+              {% elif pet.listing_type == 'adoption' %}Adopt
+              {% else %}Sale / Adopt{% endif %}
+            </span>
+          </div>
+          <div class="pet-card-body">
+            <div class="pet-card-meta">
+              <span class="pet-meta-tag">{{ pet.category.name }}</span>
+              <span class="pet-meta-tag">{{ pet.get_gender_display }}</span>
+              <span class="pet-meta-tag">{{ pet.age_display }}</span>
+            </div>
+            <h3 class="pet-card-name">{{ pet.name }}</h3>
+            <p class="pet-card-breed">{{ pet.breed.name|default:"Mixed Breed" }}</p>
+            <div class="pet-card-footer">
+              <span class="pet-price {% if pet.listing_type == 'adoption' %}pet-price-free{% endif %}">
+                {% if pet.listing_type == 'adoption' %}Free
+                {% elif pet.price %}₹{{ pet.price|floatformat:0 }}
+                {% else %}Contact{% endif %}
+              </span>
+              <div class="pet-health-icons">
+                {% if pet.is_vaccinated %}<span title="Vaccinated">💉</span>{% endif %}
+                {% if pet.is_microchipped %}<span title="Microchipped">📍</span>{% endif %}
+                {% if pet.is_dewormed %}<span title="Dewormed">✅</span>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="text-center" style="margin-top:48px;">
+      <a href="{% url 'pet_list' %}" class="btn btn-primary btn-lg">View All Pets</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🐾</div>
+      <h3>No pets listed yet</h3>
+      <p>Be the first to list a pet on BARN!</p>
+      {% if user.is_authenticated and user.is_seller %}
+        <a href="{% url 'add_pet' %}" class="btn btn-primary" style="margin-top:20px;">List a Pet</a>
+      {% else %}
+        <a href="{% url 'seller_register' %}" class="btn btn-primary" style="margin-top:20px;">Register as Seller</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══ ADOPTION BANNER ═══ -->
+<section class="section-sm">
+  <div class="adoption-banner">
+    <div>
+      <h2>Give a Pet a Second Chance ❤️</h2>
+      <p>Hundreds of animals are waiting for a loving home. Adoption is free — your love is all they need.</p>
+    </div>
+    <a href="{% url 'adoption_list' %}" class="btn btn-purple btn-lg">Adopt Today</a>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Expert Care</div>
+      <h2 class="section-title">Premium Pet Services</h2>
+      <p class="section-sub">Professional care for every stage of your pet's life.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <div class="service-icon">✂️</div>
+        <h3>Grooming</h3>
+        <p>Full-service grooming including bath, trim, nail clipping, and ear cleaning by certified groomers.</p>
+        <div class="service-price">From ₹499</div>
+        <a href="{% url 'grooming' %}" class="btn btn-outline-teal">Book Now</a>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">🩺</div>
+        <h3>Veterinary Care</h3>
+        <p>Certified vet checkups, vaccinations, deworming, and health certificates by experienced vets.</p>
+        <div class="service-price">From ₹299</div>
+        <a href="{% url 'veterinary' %}" class="btn btn-outline-teal">Book Now</a>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">🏅</div>
+        <h3>Training</h3>
+        <p>Professional obedience training, behavior modification, and socialization programs.</p>
+        <div class="service-price">From ₹799</div>
+        <a href="{% url 'training' %}" class="btn btn-outline-teal">Book Now</a>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">🏠</div>
+        <h3>Boarding & Sitting</h3>
+        <p>Safe, GPS-tracked boarding facilities and in-home pet sitting while you're away.</p>
+        <div class="service-price">From ₹399/night</div>
+        <a href="{% url 'boarding' %}" class="btn btn-outline-teal">Book Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURED PRODUCTS ═══ -->
+{% if featured_products %}
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Pet Store</div>
+      <h2 class="section-title">Top-Picked Products</h2>
+      <p class="section-sub">Premium food, toys, accessories and more — everything your pet deserves.</p>
+    </div>
+    <div class="products-grid">
+      {% for product in featured_products %}
+      <div class="product-card fade-in">
+        <div class="product-image">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <div class="product-placeholder">
+              {% if product.category.slug == 'food' %}🍖
+              {% elif product.category.slug == 'toys' %}🎾
+              {% elif product.category.slug == 'accessories' %}🎀
+              {% else %}📦{% endif %}
+            </div>
+          {% endif %}
+          {% if product.discount_percent %}<span class="discount-badge">-{{ product.discount_percent }}%</span>{% endif %}
+        </div>
+        <div class="product-body">
+          <div class="product-brand">{{ product.brand|default:"BARN Store" }}</div>
+          <div class="product-name">{{ product.name }}</div>
+          <div class="product-pricing">
+            <span class="product-price">₹{{ product.price|floatformat:0 }}</span>
+            {% if product.original_price %}<span class="product-original">₹{{ product.original_price|floatformat:0 }}</span>{% endif %}
+          </div>
+          <a href="{% url 'add_to_cart' product.id %}" class="product-add-btn">Add to Cart 🛒</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center" style="margin-top:48px;">
+      <a href="{% url 'store_home' %}" class="btn btn-primary btn-lg">Shop All Products</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ WHY BARN ═══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Why BARN</div>
+      <h2 class="section-title">The BARN Promise</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px;">
+      {% for item in "1234"|make_list %}
+      <div class="fade-in" style="text-align:center;padding:32px 20px;background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);">
+        {% if forloop.counter == 1 %}
+          <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Verified Sellers</h3>
+          <p style="font-size:14px;color:var(--ink-light);">Every breeder is license-checked and reviewed before listing.</p>
+        {% elif forloop.counter == 2 %}
+          <div style="font-size:48px;margin-bottom:16px;">💉</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Health Guarantee</h3>
+          <p style="font-size:14px;color:var(--ink-light);">All pets come with vaccination records and health documentation.</p>
+        {% elif forloop.counter == 3 %}
+          <div style="font-size:48px;margin-bottom:16px;">🛡️</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Buyer Protection</h3>
+          <p style="font-size:14px;color:var(--ink-light);">Secure transactions and dispute resolution support for buyers.</p>
+        {% elif forloop.counter == 4 %}
+          <div style="font-size:48px;margin-bottom:16px;">📞</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">24/7 Support</h3>
+          <p style="font-size:14px;color:var(--ink-light);">Dedicated pet care advisors available around the clock.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BANNER ═══ -->
+<section class="section-sm">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;">
+    <div style="background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);border-radius:var(--radius-xl);padding:64px 56px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;color:white;">
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:36px;font-weight:700;margin-bottom:12px;">Are You a Breeder or Seller?</h2>
+        <p style="font-size:17px;opacity:0.9;">Join thousands of verified breeders on BARN. Reach pet lovers across India.</p>
+      </div>
+      <a href="{% url 'seller_register' %}" class="btn btn-lg" style="background:white;color:var(--teal);white-space:nowrap;">List Your Pets →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}List a Pet — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>List a New Pet</h1>
+    <p>Fill in all details to create a compelling listing</p>
+  </div>
+</div>
+
+<div style="max-width:800px;margin:0 auto;padding:56px 24px;">
+  <div style="background:var(--white);border-radius:var(--radius-xl);padding:48px;box-shadow:var(--shadow-md);border:1px solid var(--border);">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-section-title">Basic Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Pet Name *</label>
+          {{ form.name }}
+          {% if form.name.errors %}<ul class="errorlist">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          {{ form.category }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Breed</label>
+          {{ form.breed }}
+        </div>
+        <div class="form-group">
+          <label>Gender *</label>
+          {{ form.gender }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Age</label>
+          <div style="display:flex;gap:8px;">
+            {{ form.age_value }}
+            {{ form.age_unit }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          {{ form.color }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" id="weight-group">
+          <label>Weight (kg)</label>
+          {{ form.weight_kg }}
+        </div>
+        <div class="form-group">
+          <label>Listing Type *</label>
+          {{ form.listing_type }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" id="price-group">
+          <label>Price (₹) <span style="color:var(--ink-light);font-weight:400;">— Leave blank for adoption</span></label>
+          {{ form.price }}
+        </div>
+        <div class="form-group">
+          <label>Quantity *</label>
+          {{ form.quantity }}
+        </div>
+      </div>
+
+      <div class="form-section-title">Description</div>
+      <div class="form-group">
+        <label>About This Pet *</label>
+        {{ form.description }}
+      </div>
+
+      <div id="health-section">
+        <div class="form-section-title">Health Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div class="checkbox-group">{{ form.is_vaccinated }}<label>Vaccinated</label></div>
+          <div class="checkbox-group">{{ form.is_dewormed }}<label>Dewormed</label></div>
+          <div class="checkbox-group">{{ form.is_microchipped }}<label>Microchipped</label></div>
+          <div class="checkbox-group">{{ form.is_neutered }}<label>Neutered / Spayed</label></div>
+        </div>
+        <div class="form-group">
+          <label>Health Certificate (PDF/Image)</label>
+          {{ form.health_certificate }}
+        </div>
+        <div class="form-group">
+          <label>Health Notes</label>
+          {{ form.health_notes }}
+        </div>
+      </div>
+
+      <div class="form-section-title">Photos</div>
+      <div class="form-group">
+        <label>Upload Pet Photos <span style="color:var(--ink-light);font-weight:400;">— First image will be the cover photo</span></label>
+        <input type="file" name="images" accept="image/*" multiple data-preview="imagePreview">
+        <div id="imagePreview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
+      </div>
+
+      <div class="form-section-title">Availability</div>
+      <div class="checkbox-group" style="margin-bottom:32px;">
+        {{ form.is_available }}<label>This pet is currently available</label>
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary btn-lg">Publish Listing 🐾</button>
+        <a href="{% url 'seller_dashboard' %}" class="btn btn-ghost btn-lg">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.querySelector('select[name="category"]');
+    const listingTypeSelect = document.querySelector('select[name="listing_type"]');
+    const priceGroup = document.getElementById('price-group');
+    const healthSection = document.getElementById('health-section');
+    const weightGroup = document.getElementById('weight-group');
+
+    function updateVisibility() {
+      if (!categorySelect || !listingTypeSelect) return;
+
+      // Price visibility: Hide if adoption is selected
+      if (listingTypeSelect.value === 'adoption') {
+        if (priceGroup) priceGroup.style.display = 'none';
+      } else {
+        if (priceGroup) priceGroup.style.display = 'block';
+      }
+
+      // Category specific visibility: Hide health and weight for Fish
+      const selectedCategoryText = categorySelect.options[categorySelect.selectedIndex].text.toLowerCase();
+      if (selectedCategoryText === 'fish') {
+        if (healthSection) healthSection.style.display = 'none';
+        if (weightGroup) weightGroup.style.display = 'none';
+      } else {
+        if (healthSection) healthSection.style.display = 'block';
+        if (weightGroup) weightGroup.style.display = 'block';
+      }
+    }
+
+    if (categorySelect) categorySelect.addEventListener('change', updateVisibility);
+    if (listingTypeSelect) listingTypeSelect.addEventListener('change', updateVisibility);
+    
+    // AJAX for Breed Dropdown
+    const breedSelect = document.querySelector('select[name="breed"]');
+    if (categorySelect && breedSelect) {
+      categorySelect.addEventListener('change', function() {
+        const categoryId = this.value;
+        if (!categoryId) {
+          breedSelect.innerHTML = '<option value="">---------</option>';
+          return;
+        }
+
+        const url = "{% url 'ajax_load_breeds' %}?category=" + categoryId;
+        fetch(url)
+          .then(response => response.text())
+          .then(data => {
+            breedSelect.innerHTML = data;
+          });
+      });
+    }
+
+    // Run on initial load
+    updateVisibility();
+  });
+</script>
+{% endblock %}

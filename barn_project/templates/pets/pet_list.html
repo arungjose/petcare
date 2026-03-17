@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Browse Pets — BARN{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Browse Pets</span></div>
+    <h1>Find Your Perfect Pet</h1>
+    <p>Browse {{ pets|length }} verified listings from trusted breeders across India</p>
+  </div>
+</div>
+
+<div class="content-layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>Search</h3>
+      <form method="GET">
+        <div style="position:relative;">
+          <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search pets..." class="search-input" style="padding-right:42px;">
+          <button type="submit" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;">🔍</button>
+        </div>
+        <!-- preserve other filters -->
+        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+        {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+      </form>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Category</h3>
+      <div class="filter-group">
+        <div class="filter-btns" style="flex-direction:column;gap:6px;">
+          <a href="{% url 'pet_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="filter-btn {% if not selected_category %}active{% endif %}">All Pets</a>
+          {% for cat in categories %}
+          <a href="?category={{ cat.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="filter-btn {% if selected_category == cat.slug %}active{% endif %}">
+            {{ cat.icon }} {{ cat.name }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Listing Type</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}" class="filter-btn {% if not selected_type %}active{% endif %}">All</a>
+        <a href="?type=sale{% if selected_category %}&category={{ selected_category }}{% endif %}" class="filter-btn {% if selected_type == 'sale' %}active{% endif %}">🏷️ For Sale</a>
+        <a href="?type=adoption{% if selected_category %}&category={{ selected_category }}{% endif %}" class="filter-btn {% if selected_type == 'adoption' %}active{% endif %}">❤️ For Adoption</a>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Gender</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}" class="filter-btn">Any</a>
+        <a href="?gender=male{% if selected_category %}&category={{ selected_category }}{% endif %}" class="filter-btn">♂ Male</a>
+        <a href="?gender=female{% if selected_category %}&category={{ selected_category }}{% endif %}" class="filter-btn">♀ Female</a>
+      </div>
+    </div>
+
+    {% if user.is_authenticated and user.is_seller %}
+    <div class="sidebar-card" style="background:var(--teal);color:white;text-align:center;">
+      <h3 style="color:white;">Your Account</h3>
+      <a href="{% url 'add_pet' %}" class="btn btn-lg" style="background:white;color:var(--teal);width:100%;justify-content:center;margin-top:8px;">+ List a Pet</a>
+    </div>
+    {% endif %}
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
+      <p style="color:var(--ink-light);font-size:15px;">
+        Showing <strong style="color:var(--ink);">{{ pets|length }}</strong> pet{{ pets|length|pluralize }}
+        {% if search_query %}for "<strong>{{ search_query }}</strong>"{% endif %}
+        {% if selected_category %}in <strong>{{ selected_category|title }}</strong>{% endif %}
+      </p>
+      <div style="display:flex;gap:8px;">
+        <a href="{% url 'adoption_list' %}" class="btn btn-sm" style="background:#7c3aed;color:white;">❤️ Adoption Only</a>
+      </div>
+    </div>
+
+    {% if pets %}
+    <div class="pets-grid">
+      {% for pet in pets %}
+      <a href="{% url 'pet_detail' pet.slug %}" style="text-decoration:none;color:inherit;">
+        <div class="pet-card">
+          <div class="pet-card-image">
+            {% if pet.primary_image %}
+              <img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}" loading="lazy">
+            {% else %}
+              <div class="pet-placeholder">
+                {% if pet.category.slug == 'dogs' %}🐕
+                {% elif pet.category.slug == 'cats' %}🐈
+                {% elif pet.category.slug == 'birds' %}🦜
+                {% elif pet.category.slug == 'rabbits' %}🐇
+                {% elif pet.category.slug == 'fish' %}🐠
+                {% else %}🐾{% endif %}
+              </div>
+            {% endif %}
+            <span class="pet-badge {% if pet.listing_type == 'sale' %}badge-sale{% elif pet.listing_type == 'adoption' %}badge-adopt{% else %}badge-both{% endif %}">
+              {% if pet.listing_type == 'sale' %}For Sale{% elif pet.listing_type == 'adoption' %}Adopt{% else %}Sale/Adopt{% endif %}
+            </span>
+          </div>
+          <div class="pet-card-body">
+            <div class="pet-card-meta">
+              <span class="pet-meta-tag">{{ pet.category.name }}</span>
+              <span class="pet-meta-tag">{{ pet.get_gender_display }}</span>
+              <span class="pet-meta-tag">{{ pet.age_display }}</span>
+            </div>
+            <h3 class="pet-card-name">{{ pet.name }}</h3>
+            <p class="pet-card-breed">{{ pet.breed.name|default:"Mixed Breed" }}</p>
+            <div class="pet-card-footer">
+              <span class="pet-price {% if pet.listing_type == 'adoption' %}pet-price-free{% endif %}">
+                {% if pet.listing_type == 'adoption' %}Free{% elif pet.price %}₹{{ pet.price|floatformat:0 }}{% else %}Contact{% endif %}
+              </span>
+              <div class="pet-health-icons">
+                {% if pet.is_vaccinated %}<span title="Vaccinated">💉</span>{% endif %}
+                {% if pet.is_microchipped %}<span title="Microchipped">📍</span>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No pets found</h3>
+      <p>Try adjusting your filters or search term.</p>
+      <a href="{% url 'pet_list' %}" class="btn btn-primary" style="margin-top:20px;">Clear Filters</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

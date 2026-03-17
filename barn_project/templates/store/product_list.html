@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{% if page_title %}{{ page_title }}{% else %}Products{% endif %} — BARN Store{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>{% if page_title %}{{ page_title }}{% else %}All Products{% endif %}</h1>
+    <p>{{ products|length }} product{{ products|length|pluralize }} available</p>
+  </div>
+</div>
+
+<div class="content-layout">
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>Search</h3>
+      <form method="GET">
+        <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search products...">
+        {% if selected_cat %}<input type="hidden" name="category" value="{{ selected_cat }}">{% endif %}
+        {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Search</button>
+      </form>
+    </div>
+    <div class="sidebar-card">
+      <h3>Type</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="{% url 'product_list' %}" class="filter-btn {% if not selected_type %}active{% endif %}">All Products</a>
+        <a href="?type=supply" class="filter-btn {% if selected_type == 'supply' %}active{% endif %}">🍖 Food & Supplies</a>
+        <a href="?type=accessory" class="filter-btn {% if selected_type == 'accessory' %}active{% endif %}">🎀 Accessories</a>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <h3>Sort By</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}sort=-created_at" class="filter-btn {% if sort == '-created_at' %}active{% endif %}">Newest</a>
+        <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}sort=price_asc" class="filter-btn {% if sort == 'price_asc' %}active{% endif %}">Price: Low to High</a>
+        <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}sort=price_desc" class="filter-btn {% if sort == 'price_desc' %}active{% endif %}">Price: High to Low</a>
+      </div>
+    </div>
+  </aside>
+
+  <div>
+    {% if products %}
+    <div class="products-grid">
+      {% for product in products %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}<div class="product-placeholder">{% if product.category.category_type == 'accessory' %}🎀{% else %}📦{% endif %}</div>{% endif %}
+          {% if product.discount_percent %}<span class="discount-badge">-{{ product.discount_percent }}%</span>{% endif %}
+        </div>
+        <div class="product-body">
+          <div class="product-brand">{{ product.brand|default:"BARN" }}</div>
+          <div class="product-name">{{ product.name }}</div>
+          {% if product.suitable_for %}<div style="font-size:12px;color:var(--ink-light);margin-bottom:8px;">For: {{ product.suitable_for }}</div>{% endif %}
+          <div class="product-pricing">
+            <span class="product-price">₹{{ product.price|floatformat:0 }}</span>
+            {% if product.original_price %}<span class="product-original">₹{{ product.original_price|floatformat:0 }}</span>{% endif %}
+          </div>
+          {% if product.in_stock %}
+          <a href="{% url 'add_to_cart' product.id %}" class="product-add-btn">Add to Cart 🛒</a>
+          {% else %}
+          <button class="product-add-btn" disabled style="background:var(--ink-light);cursor:not-allowed;">Out of Stock</button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">📦</div><h3>No products found</h3><a href="{% url 'product_list' %}" class="btn btn-primary" style="margin-top:20px;">Clear Filters</a></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

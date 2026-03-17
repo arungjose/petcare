@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Join BARN — Sign Up{% endblock %}
+{% block content %}
+<div class="form-page">
+  <div style="width:100%;max-width:720px;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="form-logo">BARN<span class="logo-dot">.</span></div>
+      <h1 style="font-family:var(--font-display);font-size:34px;font-weight:700;color:var(--ink);margin-bottom:10px;">Join Our Community</h1>
+      <p style="color:var(--ink-light);font-size:16px;">Are you looking for a pet, or do you have pets to sell or breed?</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <!-- BUYER CARD -->
+      <a href="{% url 'buyer_register' %}" style="text-decoration:none;">
+        <div style="background:var(--white);border-radius:var(--radius-xl);padding:48px 36px;text-align:center;border:2px solid var(--border);transition:all 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='var(--teal)';this.style.transform='translateY(-6px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none';this.style.boxShadow='none'">
+          <div style="font-size:72px;margin-bottom:20px;">🐾</div>
+          <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px;">I'm a Buyer</h2>
+          <p style="color:var(--ink-light);font-size:15px;margin-bottom:24px;line-height:1.6;">I want to find, buy, or adopt a pet and explore pet services.</p>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:white;padding:12px 28px;border-radius:100px;font-weight:600;font-size:15px;">
+            Register as Buyer →
+          </div>
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;text-align:left;">
+            <p style="font-size:13px;color:var(--ink-light);">✅ Browse all pet listings</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Contact breeders directly</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Book pet services</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Shop the pet store</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- SELLER CARD -->
+      <a href="{% url 'seller_register' %}" style="text-decoration:none;">
+        <div style="background:var(--white);border-radius:var(--radius-xl);padding:48px 36px;text-align:center;border:2px solid var(--border);transition:all 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='var(--coral)';this.style.transform='translateY(-6px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none';this.style.boxShadow='none'">
+          <div style="font-size:72px;margin-bottom:20px;">🏡</div>
+          <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px;">I'm a Seller</h2>
+          <p style="color:var(--ink-light);font-size:15px;margin-bottom:24px;line-height:1.6;">I'm a breeder or pet owner who wants to list pets for sale or adoption.</p>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:var(--coral);color:white;padding:12px 28px;border-radius:100px;font-weight:600;font-size:15px;">
+            Register as Seller →
+          </div>
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;text-align:left;">
+            <p style="font-size:13px;color:var(--ink-light);">✅ List unlimited pets</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Reach verified buyers</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Manage inquiries</p>
+            <p style="font-size:13px;color:var(--ink-light);">✅ Build your breeder profile</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <p style="text-align:center;margin-top:32px;color:var(--ink-light);font-size:15px;">
+      Already have an account? <a href="{% url 'login' %}" style="color:var(--teal);font-weight:600;">Log in here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span>/</span><a href="{% url 'pet_list' %}">Browse Pets</a><span>/</span><span>{{ category.name }}</span></div>
+    <h1>{{ category.icon }} {{ category.name }}</h1>
+    <p>{{ pets|length }} {{ category.name }} available{% if category.description %} — {{ category.description }}{% endif %}</p>
+  </div>
+</div>
+<div class="content-layout">
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>All Categories</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="{% url 'pet_list' %}" class="filter-btn">All Pets</a>
+        <a href="{% url 'pet_list' %}?category=dogs" class="filter-btn {% if category.slug == 'dogs' %}active{% endif %}">🐕 Dogs</a>
+        <a href="{% url 'pet_list' %}?category=cats" class="filter-btn {% if category.slug == 'cats' %}active{% endif %}">🐈 Cats</a>
+        <a href="{% url 'pet_list' %}?category=birds" class="filter-btn {% if category.slug == 'birds' %}active{% endif %}">🦜 Birds</a>
+        <a href="{% url 'pet_list' %}?category=rabbits" class="filter-btn {% if category.slug == 'rabbits' %}active{% endif %}">🐇 Rabbits</a>
+        <a href="{% url 'pet_list' %}?category=fish" class="filter-btn {% if category.slug == 'fish' %}active{% endif %}">🐠 Fish</a>
+      </div>
+    </div>
+  </aside>
+  <div>
+    {% if pets %}
+    <div class="pets-grid">
+      {% for pet in pets %}
+      <a href="{% url 'pet_detail' pet.slug %}" style="text-decoration:none;color:inherit;">
+        <div class="pet-card">
+          <div class="pet-card-image">
+            {% if pet.primary_image %}<img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}" loading="lazy">
+            {% else %}<div class="pet-placeholder">{{ category.icon }}</div>{% endif %}
+            <span class="pet-badge {% if pet.listing_type == 'adoption' %}badge-adopt{% else %}badge-sale{% endif %}" style="position:absolute;">
+              {% if pet.listing_type == 'adoption' %}Adopt{% else %}For Sale{% endif %}
+            </span>
+          </div>
+          <div class="pet-card-body">
+            <div class="pet-card-meta">
+              <span class="pet-meta-tag">{{ pet.get_gender_display }}</span>
+              <span class="pet-meta-tag">{{ pet.age_display }}</span>
+            </div>
+            <h3 class="pet-card-name">{{ pet.name }}</h3>
+            <p class="pet-card-breed">{{ pet.breed.name|default:"Mixed Breed" }}</p>
+            <div class="pet-card-footer">
+              <span class="pet-price {% if pet.listing_type == 'adoption' %}pet-price-free{% endif %}">
+                {% if pet.listing_type == 'adoption' %}Free{% elif pet.price %}₹{{ pet.price|floatformat:0 }}{% else %}Contact{% endif %}
+              </span>
+              <div class="pet-health-icons">{% if pet.is_vaccinated %}<span>💉</span>{% endif %}</div>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">{{ category.icon }}</div><h3>No {{ category.name }} listed yet</h3><a href="{% url 'pet_list' %}" class="btn btn-primary" style="margin-top:20px;">Browse All Pets</a></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

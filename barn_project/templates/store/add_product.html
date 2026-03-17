@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — BARN{% endblock %}
+{% block content %}
+<div class="form-page">
+  <div class="form-card form-card-wide">
+    <div class="form-header">
+      <div class="form-logo">BARN<span class="logo-dot">.</span></div>
+      <h1 class="form-title">{{ title }}</h1>
+      <p class="form-subtitle">Fill in the details for your accessory or pet supply.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="form-section-title">Product Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.name.label_tag }}
+          {{ form.name }}
+          {{ form.name.errors }}
+        </div>
+        <div class="form-group">
+          {{ form.category.label_tag }}
+          {{ form.category }}
+          {{ form.category.errors }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.brand.label_tag }}
+          {{ form.brand }}
+          {{ form.brand.errors }}
+        </div>
+        <div class="form-group">
+          {{ form.suitable_for.label_tag }}
+          {{ form.suitable_for }}
+          {{ form.suitable_for.errors }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{ form.short_description.label_tag }}
+        {{ form.short_description }}
+        {{ form.short_description.errors }}
+      </div>
+
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        {{ form.description.errors }}
+      </div>
+
+      <div class="form-section-title">Pricing & Inventory</div>
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.price.label_tag }}
+          {{ form.price }}
+          {{ form.price.errors }}
+        </div>
+        <div class="form-group">
+          {{ form.original_price.label_tag }}
+          {{ form.original_price }}
+          {{ form.original_price.errors }}
+          <div class="helptext">Leave blank if no discount.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{ form.stock.label_tag }}
+        {{ form.stock }}
+        {{ form.stock.errors }}
+      </div>
+
+      <div class="form-section-title">Media</div>
+      <div class="form-group">
+        {{ form.image.label_tag }}
+        {{ form.image }}
+        {{ form.image.errors }}
+      </div>
+
+      <div style="margin-top:40px;">
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+          {% if product %}Update Accessory{% else %}List Accessory{% endif %}
+        </button>
+        <a href="{% url 'seller_dashboard' %}" class="btn btn-ghost" style="width:100%;margin-top:12px;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}BARN — Find A New Pet For You{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- TOP ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <span>🐾 Free health check on all adopted pets &nbsp;|&nbsp; ✂️ 20% off first grooming session &nbsp;|&nbsp; 🚚 Free shipping on orders above ₹999</span>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-logo">
+      <span class="logo-barn">BARN</span>
+      <span class="logo-dot">.</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+      <li class="has-dropdown">
+        <a href="{% url 'pet_list' %}" class="nav-link">Browse Pets ▾</a>
+        <div class="dropdown">
+          <a href="{% url 'pet_list' %}">All Pets</a>
+          <a href="{% url 'pet_list' %}?category=dogs">Dogs</a>
+          <a href="{% url 'pet_list' %}?category=cats">Cats</a>
+          <a href="{% url 'pet_list' %}?category=birds">Birds</a>
+          <a href="{% url 'pet_list' %}?category=rabbits">Rabbits</a>
+          <a href="{% url 'pet_list' %}?category=fish">Fish</a>
+          <a href="{% url 'adoption_list' %}" class="adopt-link">❤️ Adopt</a>
+        </div>
+      </li>
+      <li class="has-dropdown">
+        <a href="{% url 'services_home' %}" class="nav-link">Services ▾</a>
+        <div class="dropdown">
+          <a href="{% url 'grooming' %}">✂️ Grooming</a>
+          <a href="{% url 'veterinary' %}">🩺 Veterinary</a>
+          <a href="{% url 'training' %}">🏅 Training</a>
+          <a href="{% url 'boarding' %}">🏠 Boarding</a>
+        </div>
+      </li>
+      <li class="has-dropdown">
+        <a href="{% url 'store_home' %}" class="nav-link">Products ▾</a>
+        <div class="dropdown">
+          <a href="{% url 'store_home' %}">All Products</a>
+          <a href="{% url 'product_list' %}?type=supply">🍖 Food & Supplies</a>
+          <a href="{% url 'accessories' %}">🎀 Accessories</a>
+          <a href="{% url 'cart_view' %}">🛒 My Cart</a>
+        </div>
+      </li>
+      <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+      <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      {% if user.is_authenticated %}
+        <a href="{% url 'cart_view' %}" class="cart-btn">🛒</a>
+        <div class="user-menu">
+          <button class="user-btn">{{ user.first_name|default:user.username }} ▾</button>
+          <div class="user-dropdown">
+            {% if user.can_list_products %}
+              <a href="{% url 'seller_dashboard' %}">📊 Dashboard</a>
+              {% if user.role == 'seller' %}<a href="{% url 'add_pet' %}">➕ List a Pet</a>{% endif %}
+              <a href="{% url 'add_accessory' %}">🎀 List Accessory</a>
+            {% else %}
+              <a href="{% url 'buyer_dashboard' %}">👤 My Profile</a>
+            {% endif %}
+            <a href="{% url 'edit_profile' %}">⚙️ Edit Profile</a>
+            <hr>
+            <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+        <a href="{% url 'choose_register' %}" class="btn btn-primary">Sign Up</a>
+      {% endif %}
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="messages-container">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MAIN CONTENT -->
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">BARN<span class="logo-dot">.</span></div>
+      <p>Your trusted ecosystem for finding, adopting, and caring for pets. Every animal deserves a loving home.</p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">📸</a>
+        <a href="#" aria-label="Facebook">📘</a>
+        <a href="#" aria-label="Twitter">🐦</a>
+        <a href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="{% url 'pet_list' %}">Browse Pets</a></li>
+        <li><a href="{% url 'adoption_list' %}">Adopt a Pet</a></li>
+        <li><a href="{% url 'store_home' %}">Pet Store</a></li>
+        <li><a href="{% url 'accessories' %}">Accessories</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="{% url 'grooming' %}">Grooming</a></li>
+        <li><a href="{% url 'veterinary' %}">Veterinary Care</a></li>
+        <li><a href="{% url 'training' %}">Training</a></li>
+        <li><a href="{% url 'boarding' %}">Boarding & Sitting</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        {% if user.is_authenticated %}
+          <li><a href="{% if user.is_seller %}{% url 'seller_dashboard' %}{% else %}{% url 'buyer_dashboard' %}{% endif %}">Dashboard</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'buyer_register' %}">Register as Buyer</a></li>
+          <li><a href="{% url 'seller_register' %}">Register as Seller</a></li>
+        {% endif %}
+        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+        <li><a href="{% url 'about' %}">About BARN</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 BARN Pet Platform. All rights reserved. Made with ❤️ for pets everywhere.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

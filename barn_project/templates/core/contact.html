@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>Get In Touch</h1>
+    <p>We're here to help you find your perfect pet companion</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:1000px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;">
+      <!-- CONTACT INFO -->
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:28px;font-weight:700;margin-bottom:28px;">Contact Information</h2>
+        <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:40px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:48px;height:48px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📧</div>
+            <div>
+              <p style="font-weight:700;margin-bottom:4px;">Email</p>
+              <a href="mailto:hello@barn.in" style="color:var(--teal);font-size:15px;">hello@barn.in</a>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:48px;height:48px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📞</div>
+            <div>
+              <p style="font-weight:700;margin-bottom:4px;">Phone</p>
+              <a href="tel:+911800BARN00" style="color:var(--teal);font-size:15px;">+91 1800-BARN-00</a>
+              <p style="font-size:13px;color:var(--ink-light);">Mon–Sat, 9am – 6pm IST</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:48px;height:48px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📍</div>
+            <div>
+              <p style="font-weight:700;margin-bottom:4px;">Head Office</p>
+              <p style="color:var(--ink-mid);font-size:15px;line-height:1.6;">BARN Pet Platform Pvt. Ltd.<br>Thiruvananthapuram, Kerala 695001<br>India</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--cream);border-radius:var(--radius-lg);padding:24px;">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;">Quick Links</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="{% url 'pet_list' %}" style="font-size:14px;color:var(--teal);">→ Browse Available Pets</a>
+            <a href="{% url 'seller_register' %}" style="font-size:14px;color:var(--teal);">→ Register as a Seller</a>
+            <a href="{% url 'services_home' %}" style="font-size:14px;color:var(--teal);">→ Book a Service</a>
+            <a href="mailto:support@barn.in?subject=BARN Support Request" style="font-size:14px;color:var(--teal);">→ Email Support Directly</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM -->
+      <div style="background:var(--white);border-radius:var(--radius-xl);padding:40px;border:1px solid var(--border);box-shadow:var(--shadow-md);">
+        <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:8px;">Send Us a Message</h2>
+        <p style="color:var(--ink-light);font-size:14px;margin-bottom:28px;">We typically respond within 24 hours.</p>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" name="name" required placeholder="Full name" {% if user.is_authenticated %}value="{{ user.get_full_name }}"{% endif %}>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" required placeholder="your@email.com" {% if user.is_authenticated %}value="{{ user.email }}"{% endif %}>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Subject *</label>
+            <select name="subject">
+              <option value="General Inquiry">General Inquiry</option>
+              <option value="Pet Listing Question">Pet Listing Question</option>
+              <option value="Seller Registration">Seller Registration Help</option>
+              <option value="Service Booking">Service Booking</option>
+              <option value="Order Issue">Order Issue</option>
+              <option value="Report a Problem">Report a Problem</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message *</label>
+            <textarea name="message" required rows="5" placeholder="Tell us how we can help you..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg w-full" style="justify-content:center;">
+            Send Message ✉️
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}About BARN — Our Story{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>About BARN</h1>
+    <p>India's most trusted pet ecosystem</p>
+  </div>
+</div>
+
+<section class="section" style="background:var(--white);">
+  <div class="container" style="max-width:960px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:80px;">
+      <div>
+        <div class="section-tag">Our Story</div>
+        <h2 style="font-family:var(--font-display);font-size:36px;font-weight:700;line-height:1.2;margin-bottom:20px;color:var(--ink);">Built by Pet Lovers, <span style="color:var(--teal);">for Pet Lovers</span></h2>
+        <p style="font-size:16px;color:var(--ink-mid);line-height:1.8;margin-bottom:16px;">BARN was founded with a simple belief: every animal deserves a loving home, and every pet lover deserves a trustworthy platform to find their perfect companion.</p>
+        <p style="font-size:16px;color:var(--ink-mid);line-height:1.8;">We connect verified breeders with responsible buyers, facilitate free adoptions, and provide everything your pet needs — from grooming to veterinary care — all in one place.</p>
+      </div>
+      <div style="background:var(--teal-light);border-radius:var(--radius-xl);padding:48px;text-align:center;">
+        <div style="font-size:80px;margin-bottom:20px;">🐾</div>
+        <h3 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--teal);">BARN</h3>
+        <p style="color:var(--teal-dark);font-size:15px;">Breeder · Adoption · Resources · Nurture</p>
+      </div>
+    </div>
+
+
+    <div style="margin-bottom:80px;">
+      <h2 style="font-family:var(--font-display);font-size:30px;font-weight:700;text-align:center;margin-bottom:40px;">Our Values</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+
+        <div style="padding:32px;background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);text-align:center;">
+          <div style="font-size:44px;margin-bottom:16px;">🐾</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Animal Welfare</h3>
+          <p style="font-size:14px;color:var(--ink-light);">We put the welfare of animals first in every decision we make.</p>
+        </div>
+        <div style="padding:32px;background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);text-align:center;">
+          <div style="font-size:44px;margin-bottom:16px;">🔍</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Transparency</h3>
+          <p style="font-size:14px;color:var(--ink-light);">Every breeder is verified, every claim is checked. No surprises.</p>
+        </div>
+        <div style="padding:32px;background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);text-align:center;">
+          <div style="font-size:44px;margin-bottom:16px;">❤️</div>
+          <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700;margin-bottom:10px;">Community</h3>
+          <p style="font-size:14px;color:var(--ink-light);">We build lasting bonds between pets, owners, and care providers.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,var(--teal),var(--teal-dark));border-radius:var(--radius-xl);padding:56px;text-align:center;color:white;">
+      <h2 style="font-family:var(--font-display);font-size:30px;font-weight:700;margin-bottom:12px;">Ready to Find Your Pet?</h2>
+      <p style="font-size:17px;opacity:0.9;margin-bottom:32px;">Join thousands of happy pet families across India.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="{% url 'pet_list' %}" class="btn btn-lg" style="background:white;color:var(--teal);">Browse Pets</a>
+        <a href="{% url 'choose_register' %}" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.4);">Join BARN</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

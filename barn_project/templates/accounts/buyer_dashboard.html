@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>My Account</h1>
+    <p>Welcome, {{ user.first_name|default:user.username }}! 🐾</p>
+  </div>
+</div>
+<div class="dashboard-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-nav">
+      <a href="{% url 'buyer_dashboard' %}" class="active">👤 My Profile</a>
+      <a href="{% url 'pet_list' %}">🔍 Browse Pets</a>
+      <a href="{% url 'adoption_list' %}">❤️ Adopt</a>
+      <a href="{% url 'store_home' %}">🛒 Pet Store</a>
+      <a href="{% url 'services_home' %}">🩺 Services</a>
+      <a href="{% url 'edit_profile' %}">⚙️ Edit Profile</a>
+      <a href="{% url 'logout' %}" style="color:var(--coral);">🚪 Logout</a>
+    </div>
+  </aside>
+  <div>
+    <div style="background:var(--white);border-radius:var(--radius-lg);padding:36px;border:1px solid var(--border);margin-bottom:28px;">
+      <h2 style="font-family:var(--font-display);font-size:24px;margin-bottom:20px;">Account Details</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">Full Name</p><p style="font-weight:600;">{{ user.get_full_name|default:"—" }}</p></div>
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">Username</p><p style="font-weight:600;">{{ user.username }}</p></div>
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">Email</p><p style="font-weight:600;">{{ user.email }}</p></div>
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">Phone</p><p style="font-weight:600;">{{ user.phone|default:"—" }}</p></div>
+        {% if profile %}
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">City</p><p style="font-weight:600;">{{ profile.city|default:"—" }}</p></div>
+        <div><p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">State</p><p style="font-weight:600;">{{ profile.state|default:"—" }}</p></div>
+        {% endif %}
+      </div>
+      <div style="margin-top:24px;">
+        <a href="{% url 'edit_profile' %}" class="btn btn-outline-teal">Edit Profile</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <a href="{% url 'pet_list' %}" style="text-decoration:none;">
+        <div style="background:var(--teal-light);border-radius:var(--radius-lg);padding:28px;text-align:center;transition:all 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:40px;margin-bottom:12px;">🐕</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--teal);">Browse Pets</h3>
+        </div>
+      </a>
+      <a href="{% url 'services_home' %}" style="text-decoration:none;">
+        <div style="background:var(--coral-light);border-radius:var(--radius-lg);padding:28px;text-align:center;transition:all 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:40px;margin-bottom:12px;">🩺</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--coral);">Book Services</h3>
+        </div>
+      </a>
+      <a href="{% url 'store_home' %}" style="text-decoration:none;">
+        <div style="background:#f5f3ff;border-radius:var(--radius-lg);padding:28px;text-align:center;transition:all 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:40px;margin-bottom:12px;">🛍️</div>
+          <h3 style="font-size:16px;font-weight:700;color:#7c3aed;">Shop Store</h3>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

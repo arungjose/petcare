@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed — BARN{% endblock %}
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:60px 24px;">
+  <div style="text-align:center;max-width:560px;">
+    <div style="width:100px;height:100px;background:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;margin:0 auto 28px;">✅</div>
+    <h1 style="font-family:var(--font-display);font-size:38px;font-weight:900;color:var(--ink);margin-bottom:12px;">Order Confirmed!</h1>
+    <p style="font-size:18px;color:var(--ink-light);margin-bottom:8px;">Thank you for your purchase.</p>
+    <div style="background:var(--teal-light);border-radius:var(--radius-lg);padding:20px;margin:28px 0;">
+      <p style="font-size:14px;color:var(--teal-dark);margin-bottom:4px;">Order Number</p>
+      <p style="font-size:24px;font-weight:700;color:var(--teal);">{{ order.order_number }}</p>
+    </div>
+    <p style="font-size:15px;color:var(--ink-mid);margin-bottom:32px;">
+      A confirmation will be sent to <strong>{{ order.customer_email }}</strong>. Your order will be delivered to <strong>{{ order.city }}, {{ order.state }}</strong>.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="{% url 'store_home' %}" class="btn btn-primary btn-lg">Continue Shopping</a>
+      <a href="{% url 'home' %}" class="btn btn-ghost btn-lg">Back to Home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
