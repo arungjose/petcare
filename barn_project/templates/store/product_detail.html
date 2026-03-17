@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — BARN Store{% endblock %}
+{% block content %}
+<div style="max-width:1100px;margin:0 auto;padding:40px 24px;">
+  <div class="breadcrumb" style="justify-content:flex-start;margin-bottom:32px;font-size:14px;color:var(--ink-light);">
+    <a href="/" style="color:var(--teal);">Home</a> /
+    <a href="{% url 'store_home' %}" style="color:var(--teal);">Store</a> /
+    <a href="{% url 'product_list' %}" style="color:var(--teal);">Products</a> /
+    <span>{{ product.name }}</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-bottom:56px;">
+    <!-- IMAGE -->
+    <div style="position:sticky;top:90px;align-self:start;">
+      <div style="background:var(--cream);border-radius:var(--radius-xl);aspect-ratio:1;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;">
+        {% else %}
+          <span style="font-size:120px;">
+            {% if product.category.category_type == 'accessory' %}🎀{% else %}📦{% endif %}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">{{ product.brand|default:"BARN Store" }}</div>
+      <h1 style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--ink);margin-bottom:12px;">{{ product.name }}</h1>
+      <p style="font-size:16px;color:var(--ink-mid);margin-bottom:24px;">{{ product.short_description }}</p>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+        <span style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--teal);">₹{{ product.price|floatformat:0 }}</span>
+        {% if product.original_price %}
+          <span style="font-size:20px;color:var(--ink-light);text-decoration:line-through;">₹{{ product.original_price|floatformat:0 }}</span>
+          <span style="background:var(--coral);color:white;padding:4px 12px;border-radius:100px;font-size:14px;font-weight:700;">-{{ product.discount_percent }}% OFF</span>
+        {% endif %}
+      </div>
+
+      {% if product.weight %}<p style="font-size:14px;color:var(--ink-light);margin-bottom:8px;">⚖️ Weight: {{ product.weight }}</p>{% endif %}
+      {% if product.suitable_for %}<p style="font-size:14px;color:var(--ink-light);margin-bottom:20px;">🐾 Suitable for: {{ product.suitable_for }}</p>{% endif %}
+
+      {% if product.in_stock %}
+        <p style="color:#059669;font-weight:600;font-size:14px;margin-bottom:20px;">✅ In Stock ({{ product.stock }} units)</p>
+        
+        <form method="POST" style="margin-bottom:24px;">
+          {% csrf_token %}
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <label style="font-weight:600;font-size:14px;">Quantity:</label>
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" style="width:70px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-md);">
+          </div>
+          
+          <div style="display:flex;gap:12px;">
+            <button type="submit" formaction="{% url 'add_to_cart' product.id %}" class="btn btn-outline btn-lg" style="flex:1;">Add to Cart 🛒</button>
+            <button type="submit" formaction="{% url 'buy_now' product.id %}" class="btn btn-primary btn-lg" style="flex:1;">Buy Now ⚡</button>
+          </div>
+        </form>
+        
+        {% if product.seller and product.seller.seller_profile and product.seller.seller_profile.slug %}
+        <div style="margin-top:16px;font-size:14px;color:var(--ink-mid);">
+          Sold by: <a href="{% url 'seller_public_profile' product.seller.seller_profile.slug %}" style="color:var(--teal);font-weight:600;">{{ product.seller.seller_profile.shop_name|default:product.seller.get_full_name }}</a>
+        </div>
+        {% endif %}
+      {% else %}
+        <p style="color:var(--coral);font-weight:600;margin-bottom:20px;">❌ Out of Stock</p>
+      {% endif %}
+
+      <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">Description</h3>
+        <p style="font-size:15px;color:var(--ink-mid);line-height:1.8;">{{ product.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  {% if related %}
+  <div>
+    <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:28px;">You May Also Like</h2>
+    <div class="products-grid">
+      {% for p in related %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}">
+          {% else %}<div class="product-placeholder">📦</div>{% endif %}
+        </div>
+        <div class="product-body">
+          <div class="product-brand">{{ p.brand|default:"BARN" }}</div>
+          <div class="product-name">{{ p.name }}</div>
+          <div class="product-pricing"><span class="product-price">₹{{ p.price|floatformat:0 }}</span></div>
+          <a href="{% url 'add_to_cart' p.id %}" class="product-add-btn">Add to Cart</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

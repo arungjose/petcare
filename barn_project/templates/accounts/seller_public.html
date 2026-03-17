@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ seller.business_name }} — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>{{ seller.business_name }}</h1>
+    <p>📍 {{ seller.city }}, {{ seller.state }} · {{ seller.years_in_business }} years in business</p>
+    <span class="verification-badge {% if seller.verification_status == 'approved' %}badge-approved{% else %}badge-pending{% endif %}" style="margin-top:12px;display:inline-flex;">
+      {% if seller.verification_status == 'approved' %}✅ Verified Seller{% else %}⏳ Pending{% endif %}
+    </span>
+  </div>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:320px 1fr;gap:40px;">
+  <!-- SELLER INFO -->
+  <div>
+    <div style="background:var(--white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border);margin-bottom:20px;">
+      <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink-light);margin-bottom:16px;">Contact</h3>
+      <p style="margin-bottom:10px;font-size:15px;">📞 {{ seller.business_phone }}</p>
+      <p style="margin-bottom:10px;font-size:15px;">📧 {{ seller.business_email }}</p>
+      <p style="margin-bottom:10px;font-size:15px;">📍 {{ seller.full_address }}</p>
+      {% if seller.website %}<p style="font-size:15px;">🌐 <a href="{{ seller.website }}" target="_blank" style="color:var(--teal);">{{ seller.website }}</a></p>{% endif %}
+      <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="mailto:{{ seller.business_email }}?subject=Inquiry from BARN" class="btn btn-primary btn-sm">📧 Email Seller</a>
+        <a href="tel:{{ seller.business_phone }}" class="btn btn-outline-teal btn-sm">📞 Call</a>
+      </div>
+    </div>
+    <div style="background:var(--white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border);">
+      <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink-light);margin-bottom:16px;">About</h3>
+      <p style="font-size:14px;color:var(--ink-mid);line-height:1.7;">{{ seller.about_business }}</p>
+      {% if seller.specialization %}
+      <p style="margin-top:14px;font-size:13px;color:var(--teal);font-weight:600;">🐾 Specializes in: {{ seller.specialization }}</p>{% endif %}
+      {% if seller.kennel_club_membership %}
+      <p style="font-size:13px;color:var(--ink-light);margin-top:8px;">🏅 {{ seller.kennel_club_membership }}</p>{% endif %}
+    </div>
+  </div>
+
+  <!-- PETS -->
+  <div>
+    <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:24px;">Available Pets</h2>
+    {% if pets %}
+    <div class="pets-grid">
+      {% for pet in pets %}
+      <a href="{% url 'pet_detail' pet.slug %}" style="text-decoration:none;color:inherit;">
+        <div class="pet-card">
+          <div class="pet-card-image">
+            {% if pet.primary_image %}<img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}">
+            {% else %}<div class="pet-placeholder">🐾</div>{% endif %}
+            <span class="pet-badge {% if pet.listing_type == 'adoption' %}badge-adopt{% else %}badge-sale{% endif %}" style="position:absolute;">
+              {% if pet.listing_type == 'adoption' %}Adopt{% else %}For Sale{% endif %}
+            </span>
+          </div>
+          <div class="pet-card-body">
+            <h3 class="pet-card-name">{{ pet.name }}</h3>
+            <p class="pet-card-breed">{{ pet.breed.name|default:"Mixed" }} · {{ pet.age_display }}</p>
+            <div class="pet-card-footer">
+              <span class="pet-price">{% if pet.listing_type == 'adoption' %}Free{% elif pet.price %}₹{{ pet.price|floatformat:0 }}{% else %}Contact{% endif %}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ACCESSORIES -->
+    {% if products %}
+    <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;margin:40px 0 24px;">Accessories & Supplies</h2>
+    <div class="products-grid">
+      {% for item in products %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}">
+          {% else %}<div class="product-placeholder">📦</div>{% endif %}
+        </div>
+        <div class="product-body">
+          <div class="product-brand">{{ item.brand|default:"Seller Item" }}</div>
+          <div class="product-name">{{ item.name }}</div>
+          <div class="product-pricing">
+            <span class="product-price">₹{{ item.price|floatformat:0 }}</span>
+          </div>
+          <a href="{% url 'product_detail' item.slug %}" class="btn btn-outline-teal btn-sm" style="width:100%;margin-top:10px;">View Details</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not pets and not products %}
+    <div class="empty-state" style="padding:60px;background:var(--cream);border-radius:var(--radius-lg);text-align:center;">
+       <p style="color:var(--ink-light);">This seller hasn't listed any items yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

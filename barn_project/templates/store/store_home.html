@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Pet Store — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Store</span></div>
+    <h1>🛍️ BARN Pet Store</h1>
+    <p>Premium food, accessories, and supplies for your beloved companions</p>
+  </div>
+</div>
+
+<!-- CATEGORY BANNERS -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:56px;">
+      <a href="{% url 'product_list' %}?type=supply" style="text-decoration:none;">
+        <div style="background:linear-gradient(135deg,var(--teal),var(--teal-dark));border-radius:var(--radius-xl);padding:48px;color:white;transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:56px;margin-bottom:16px;">🍖</div>
+          <h2 style="font-family:var(--font-display);font-size:30px;font-weight:700;margin-bottom:10px;">Food & Supplies</h2>
+          <p style="opacity:0.9;font-size:16px;margin-bottom:20px;">Organic food, treats, health supplements and more</p>
+          <span style="background:rgba(255,255,255,0.2);padding:10px 24px;border-radius:100px;font-weight:700;">Shop Now →</span>
+        </div>
+      </a>
+      <a href="{% url 'accessories' %}" style="text-decoration:none;">
+        <div style="background:linear-gradient(135deg,var(--coral),var(--coral-dark));border-radius:var(--radius-xl);padding:48px;color:white;transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:56px;margin-bottom:16px;">🎀</div>
+          <h2 style="font-family:var(--font-display);font-size:30px;font-weight:700;margin-bottom:10px;">Accessories</h2>
+          <p style="opacity:0.9;font-size:16px;margin-bottom:20px;">Collars, leashes, beds, carriers and premium gear</p>
+          <span style="background:rgba(255,255,255,0.2);padding:10px 24px;border-radius:100px;font-weight:700;">Shop Now →</span>
+        </div>
+      </a>
+    </div>
+
+    {% if featured %}
+    <div class="section-header">
+      <div class="section-tag">Featured</div>
+      <h2 class="section-title">Best Sellers</h2>
+    </div>
+    <div class="products-grid">
+      {% for product in featured %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+          <div class="product-placeholder">
+            {% if product.category.slug == 'food' %}🍖{% elif product.category.slug == 'toys' %}🎾{% elif 'collar' in product.name|lower %}🏷{% else %}📦{% endif %}
+          </div>
+          {% endif %}
+          {% if product.discount_percent %}<span class="discount-badge">-{{ product.discount_percent }}%</span>{% endif %}
+        </div>
+        <div class="product-body">
+          <div class="product-brand">{{ product.brand|default:"BARN Store" }}</div>
+          <div class="product-name">{{ product.name }}</div>
+          <div class="product-pricing">
+            <span class="product-price">₹{{ product.price|floatformat:0 }}</span>
+            {% if product.original_price %}<span class="product-original">₹{{ product.original_price|floatformat:0 }}</span>{% endif %}
+          </div>
+          <div style="display:flex;gap:8px;">
+            <a href="{% url 'product_detail' product.slug %}" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;">Details</a>
+            <a href="{% url 'add_to_cart' product.id %}" class="product-add-btn" style="flex:2;">🛒 Add</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center" style="margin-top:40px;">
+      <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">View All Products</a>
+    </div>
+    {% endif %}
+
+    <!-- SELL ON BARN CTA -->
+    <div style="background:var(--gray-50);border-radius:var(--radius-xl);padding:48px;text-align:center;margin-top:64px;border:1px dashed var(--gray-300);">
+      <div style="font-size:40px;margin-bottom:16px;">🏢</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;font-weight:700;margin-bottom:12px;">Sell Your Accessories on BARN</h2>
+      <p style="color:var(--gray-600);max-width:600px;margin:0 auto 24px;">Are you a pet product seller? Join India's premium pet ecosystem and reach thousands of pet parents.</p>
+      {% if user.is_authenticated %}
+        {% if user.can_list_products %}
+          <a href="{% url 'add_accessory' %}" class="btn btn-teal btn-lg">List Your Product Now</a>
+        {% else %}
+          <div class="alert alert-info" style="display:inline-block;margin-bottom:0;">
+            Current account is a Buyer. <a href="{% url 'edit_profile' %}" style="font-weight:700;">Switch to Seller</a> to list products.
+          </div>
+        {% endif %}
+      {% else %}
+        <div style="display:flex;gap:16px;justify-content:center;">
+          <a href="{% url 'seller_register' %}" class="btn btn-primary btn-lg">Become a Seller</a>
+          <a href="{% url 'login' %}" class="btn btn-ghost btn-lg">Login to List</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

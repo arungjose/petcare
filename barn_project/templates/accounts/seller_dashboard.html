@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Seller Dashboard — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>Seller Dashboard</h1>
+    <p>Welcome back, {{ user.first_name|default:user.username }}!</p>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div class="dash-nav">
+      <a href="{% url 'seller_dashboard' %}" class="active">📊 Overview</a>
+      <a href="{% url 'add_pet' %}">➕ List New Pet</a>
+      <a href="{% url 'edit_profile' %}">⚙️ Edit Profile</a>
+      <a href="{% url 'pet_list' %}">🔍 Browse Marketplace</a>
+      <a href="{% url 'logout' %}" style="color:var(--coral);">🚪 Logout</a>
+    </div>
+
+    {% if seller_profile %}
+    <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--border);margin-top:16px;text-align:center;">
+      <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink-light);margin-bottom:8px;">Status</p>
+      <span class="verification-badge {% if seller_profile.verification_status == 'approved' %}badge-approved{% elif seller_profile.verification_status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}" style="font-size:13px;padding:8px 16px;">
+        {% if seller_profile.verification_status == 'approved' %}✅ Verified Seller
+        {% elif seller_profile.verification_status == 'pending' %}⏳ Pending Review
+        {% else %}❌ Not Approved{% endif %}
+      </span>
+      {% if seller_profile.verification_status == 'pending' %}
+      <p style="font-size:12px;color:var(--ink-light);margin-top:10px;">Your documents are being reviewed. Usually 24–48 hours.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </aside>
+
+  <!-- MAIN -->
+  <div>
+    <!-- STAT CARDS -->
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-card-num">{{ pets|length }}</div>
+        <div class="stat-card-label">Active Listings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num" style="color:var(--coral);">
+          {% with total_views=pets|length %}0{% endwith %}
+        </div>
+        <div class="stat-card-label">Total Views</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num" style="color:#8b5cf6;">0</div>
+        <div class="stat-card-label">Inquiries</div>
+      </div>
+    </div>
+
+    <!-- SELLER PROFILE CARD -->
+    {% if seller_profile %}
+    <div style="background:var(--white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border);margin-bottom:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+        <div>
+          <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;">{{ seller_profile.business_name }}</h2>
+          <p style="color:var(--ink-light);font-size:14px;margin-top:4px;">📍 {{ seller_profile.city }}, {{ seller_profile.state }} &nbsp;|&nbsp; 📞 {{ seller_profile.business_phone }}</p>
+          <p style="color:var(--ink-light);font-size:14px;">📧 {{ seller_profile.business_email }} &nbsp;|&nbsp; 📜 License: {{ seller_profile.breeder_license_number }}</p>
+          {% if seller_profile.specialization %}
+          <p style="font-size:14px;color:var(--teal);margin-top:8px;font-weight:500;">🐾 {{ seller_profile.specialization }}</p>
+          {% endif %}
+        </div>
+        <a href="{% url 'edit_profile' %}" class="btn btn-ghost btn-sm">Edit Profile</a>
+      </div>
+    </div>
+    {% else %}
+    <div style="background:var(--coral-light);border-radius:var(--radius-lg);padding:24px;border:1px solid var(--coral);margin-bottom:28px;">
+      <p style="color:var(--coral-dark);">⚠️ Your seller profile is incomplete. <a href="{% url 'edit_profile' %}" style="font-weight:700;color:var(--coral-dark);">Complete it now →</a></p>
+    </div>
+    {% endif %}
+
+    <!-- PET LISTINGS -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="font-family:var(--font-display);font-size:22px;font-weight:700;">Your Listings</h3>
+      <a href="{% url 'add_pet' %}" class="btn btn-primary btn-sm">+ Add New Pet</a>
+    </div>
+
+    {% if pets %}
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      {% for pet in pets %}
+      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--border);display:flex;gap:20px;align-items:center;">
+        <div style="width:80px;height:60px;border-radius:var(--radius);overflow:hidden;background:var(--teal-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;">
+          {% if pet.primary_image %}<img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}" style="width:100%;height:100%;object-fit:cover;">
+          {% elif pet.category.slug == 'dogs' %}🐕
+          {% elif pet.category.slug == 'cats' %}🐈
+          {% elif pet.category.slug == 'birds' %}🦜
+          {% else %}🐾{% endif %}
+        </div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <h4 style="font-weight:700;font-size:16px;">{{ pet.name }}</h4>
+            <span class="pet-meta-tag" style="font-size:12px;">{{ pet.category.name }}</span>
+            <span style="font-size:12px;padding:3px 10px;border-radius:100px;{% if pet.is_available %}background:#d1fae5;color:#065f46;{% else %}background:#fee2e2;color:#991b1b;{% endif %}font-weight:600;">
+              {% if pet.is_available %}● Active{% else %}● Inactive{% endif %}
+            </span>
+          </div>
+          <p style="font-size:14px;color:var(--ink-light);margin-top:4px;">
+            {{ pet.breed.name|default:"Mixed" }} · {{ pet.age_display }} · {{ pet.get_gender_display }}
+            {% if pet.price %} · <strong style="color:var(--teal);">₹{{ pet.price|floatformat:0 }}</strong>{% endif %}
+          </p>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <a href="{% url 'pet_detail' pet.slug %}" class="btn btn-ghost btn-sm">View</a>
+          <a href="{% url 'edit_pet' pet.slug %}" class="btn btn-outline-teal btn-sm">Edit</a>
+          <a href="{% url 'delete_pet' pet.slug %}" class="btn btn-sm" style="color:var(--coral);border:2px solid var(--coral);background:transparent;border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;">Delete</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- ACCESSORY LISTINGS -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:40px 0 20px;">
+      <h3 style="font-family:var(--font-display);font-size:22px;font-weight:700;">Accessories & Supplies</h3>
+      <a href="{% url 'add_accessory' %}" class="btn btn-outline-teal btn-sm">+ List Accessory</a>
+    </div>
+
+    {% if products %}
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      {% for item in products %}
+      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--border);display:flex;gap:20px;align-items:center;">
+        <div style="width:80px;height:60px;border-radius:var(--radius);overflow:hidden;background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" style="width:100%;height:100%;object-fit:cover;">
+          {% elif item.category.category_type == 'food' %}🍖
+          {% elif item.category.category_type == 'accessory' %}🎀
+          {% else %}📦{% endif %}
+        </div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <h4 style="font-weight:700;font-size:16px;">{{ item.name }}</h4>
+            <span class="pet-meta-tag" style="font-size:12px;">{{ item.category.name }}</span>
+            <span style="font-size:12px;padding:3px 10px;border-radius:100px;{% if item.is_available %}background:#d1fae5;color:#065f46;{% else %}background:#fee2e2;color:#991b1b;{% endif %}font-weight:600;">
+              {% if item.is_available %}● Active{% else %}● Inactive{% endif %}
+            </span>
+          </div>
+          <p style="font-size:14px;color:var(--ink-light);margin-top:4px;">
+            Stock: {{ item.stock }} · <strong style="color:var(--teal);">₹{{ item.price|floatformat:0 }}</strong>
+          </p>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <a href="{% url 'product_detail' item.slug %}" class="btn btn-ghost btn-sm">View</a>
+          <a href="{% url 'edit_accessory' item.pk %}" class="btn btn-outline-teal btn-sm">Edit</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="background:var(--white);border-radius:var(--radius-lg);border:2px dashed var(--border);">
+      <div class="empty-icon">📦</div>
+      <h3>No accessories listed</h3>
+      <p>List collars, food, toys and more for pet owners!</p>
+      <a href="{% url 'add_accessory' %}" class="btn btn-outline-teal" style="margin-top:20px;">List Your First Accessory</a>
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

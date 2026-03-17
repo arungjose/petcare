@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Adopt a Pet — BARN{% endblock %}
+{% block content %}
+<div class="page-header" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Adopt</span></div>
+    <h1>❤️ Adopt a Pet</h1>
+    <p>Give a loving animal the forever home they deserve — completely free.</p>
+  </div>
+</div>
+
+<div style="background:linear-gradient(135deg,#f5f3ff,#faf8f4);padding:48px 24px 0;">
+  <div class="container" style="max-width:900px;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center;">
+      <div style="background:white;border-radius:var(--radius-lg);padding:28px;border:1px solid #e9d5ff;">
+        <div style="font-size:40px;margin-bottom:10px;">🆓</div>
+        <h3 style="font-family:var(--font-display);font-size:18px;margin-bottom:6px;">Always Free</h3>
+        <p style="font-size:13px;color:var(--ink-light);">Adoption listings are always free of charge</p>
+      </div>
+      <div style="background:white;border-radius:var(--radius-lg);padding:28px;border:1px solid #e9d5ff;">
+        <div style="font-size:40px;margin-bottom:10px;">💉</div>
+        <h3 style="font-family:var(--font-display);font-size:18px;margin-bottom:6px;">Health Checked</h3>
+        <p style="font-size:13px;color:var(--ink-light);">Most pets come vaccinated & dewormed</p>
+      </div>
+      <div style="background:white;border-radius:var(--radius-lg);padding:28px;border:1px solid #e9d5ff;">
+        <div style="font-size:40px;margin-bottom:10px;">🏠</div>
+        <h3 style="font-family:var(--font-display);font-size:18px;margin-bottom:6px;">Loving Homes</h3>
+        <p style="font-size:13px;color:var(--ink-light);">Pets from caring families seeking responsible owners</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content-layout">
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>Filter by Animal</h3>
+      <div class="filter-btns" style="flex-direction:column;gap:6px;">
+        <a href="{% url 'adoption_list' %}" class="filter-btn {% if not selected_category %}active{% endif %}">All Animals</a>
+        {% for cat in categories %}
+        <a href="?category={{ cat.slug }}" class="filter-btn {% if selected_category == cat.slug %}active{% endif %}">{{ cat.icon }} {{ cat.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </aside>
+
+  <div>
+    <div style="margin-bottom:24px;">
+      <p style="color:var(--ink-light);">{{ pets|length }} pet{{ pets|length|pluralize }} available for adoption</p>
+    </div>
+
+    {% if pets %}
+    <div class="pets-grid">
+      {% for pet in pets %}
+      <a href="{% url 'pet_detail' pet.slug %}" style="text-decoration:none;color:inherit;">
+        <div class="pet-card" style="border-color:#e9d5ff;">
+          <div class="pet-card-image">
+            {% if pet.primary_image %}<img src="{{ pet.primary_image.image.url }}" alt="{{ pet.name }}" loading="lazy">
+            {% else %}<div class="pet-placeholder" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
+              {% if pet.category.slug == 'dogs' %}🐕{% elif pet.category.slug == 'cats' %}🐈{% elif pet.category.slug == 'birds' %}🦜{% else %}🐾{% endif %}
+            </div>{% endif %}
+            <span class="pet-badge badge-adopt" style="background:#7c3aed;">Free Adoption</span>
+          </div>
+          <div class="pet-card-body">
+            <div class="pet-card-meta">
+              <span class="pet-meta-tag">{{ pet.category.name }}</span>
+              <span class="pet-meta-tag">{{ pet.get_gender_display }}</span>
+              <span class="pet-meta-tag">{{ pet.age_display }}</span>
+            </div>
+            <h3 class="pet-card-name">{{ pet.name }}</h3>
+            <p class="pet-card-breed">{{ pet.breed.name|default:"Mixed Breed" }}</p>
+            <p style="font-size:14px;color:var(--ink-light);margin-bottom:14px;">{{ pet.description|truncatechars:80 }}</p>
+            <div class="pet-card-footer">
+              <span class="pet-price" style="color:#7c3aed;">Free ❤️</span>
+              <div class="pet-health-icons">
+                {% if pet.is_vaccinated %}<span title="Vaccinated">💉</span>{% endif %}
+                {% if pet.is_dewormed %}<span title="Dewormed">✅</span>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🐾</div>
+      <h3>No adoption listings right now</h3>
+      <p>Check back soon — new pets are listed every day.</p>
+      <a href="{% url 'pet_list' %}" class="btn btn-primary" style="margin-top:20px;">Browse All Pets</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

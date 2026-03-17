@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Edit {{ pet.name }} — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>Edit Listing: {{ pet.name }}</h1>
+  </div>
+</div>
+<div style="max-width:800px;margin:0 auto;padding:56px 24px;">
+  <div style="background:var(--white);border-radius:var(--radius-xl);padding:48px;box-shadow:var(--shadow-md);border:1px solid var(--border);">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-section-title">Basic Information</div>
+      <div class="form-row">
+        <div class="form-group"><label>Pet Name *</label>{{ form.name }}</div>
+        <div class="form-group"><label>Category *</label>{{ form.category }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Breed</label>{{ form.breed }}</div>
+        <div class="form-group"><label>Gender *</label>{{ form.gender }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Age</label><div style="display:flex;gap:8px;">{{ form.age_value }}{{ form.age_unit }}</div></div>
+        <div class="form-group"><label>Color</label>{{ form.color }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Weight (kg)</label>{{ form.weight_kg }}</div>
+        <div class="form-group"><label>Listing Type *</label>{{ form.listing_type }}</div>
+      </div>
+      <div class="form-group"><label>Price (₹)</label>{{ form.price }}</div>
+      <div class="form-section-title">Description</div>
+      <div class="form-group"><label>About This Pet *</label>{{ form.description }}</div>
+      <div class="form-section-title">Health</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="checkbox-group">{{ form.is_vaccinated }}<label>Vaccinated</label></div>
+        <div class="checkbox-group">{{ form.is_dewormed }}<label>Dewormed</label></div>
+        <div class="checkbox-group">{{ form.is_microchipped }}<label>Microchipped</label></div>
+        <div class="checkbox-group">{{ form.is_neutered }}<label>Neutered</label></div>
+      </div>
+      <div class="form-group"><label>Health Notes</label>{{ form.health_notes }}</div>
+      <div class="form-section-title">Add More Photos</div>
+      <div class="form-group">
+        <input type="file" name="images" accept="image/*" multiple data-preview="newImgs">
+        <div id="newImgs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
+      </div>
+      <div class="checkbox-group" style="margin-bottom:32px;">{{ form.is_available }}<label>Available</label></div>
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+        <a href="{% url 'seller_dashboard' %}" class="btn btn-ghost btn-lg">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

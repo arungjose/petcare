@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ page_title }} — BARN{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span>/</span><a href="{% url 'services_home' %}">Services</a><span>/</span><span>{{ page_title }}</span></div>
+    <h1>{{ page_icon }} {{ page_title }}</h1>
+    {% if category %}<p>{{ category.description }}</p>{% endif %}
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    {% if services %}
+    <div class="services-grid">
+      {% for svc in services %}
+      <div class="service-card">
+        <div class="service-icon">{{ page_icon }}</div>
+        <h3>{{ svc.name }}</h3>
+        <p>{{ svc.short_description }}</p>
+        {% if svc.includes %}
+        <div style="text-align:left;margin-bottom:16px;">
+          {% for item in svc.get_includes_list %}
+          <p style="font-size:13px;color:var(--ink-light);margin-bottom:4px;">✓ {{ item }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="service-price">₹{{ svc.price|floatformat:0 }}</div>
+        {% if svc.duration %}<p style="font-size:13px;color:var(--ink-light);margin-bottom:16px;">⏱ {{ svc.duration }}</p>{% endif %}
+        <a href="{% url 'service_detail' svc.slug %}" class="btn btn-outline-teal">Book Now</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">{{ page_icon }}</div>
+      <h3>No {{ page_title }} services listed yet</h3>
+      <p>Check back soon — we're adding new services regularly.</p>
+      <a href="{% url 'services_home' %}" class="btn btn-primary" style="margin-top:20px;">All Services</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
